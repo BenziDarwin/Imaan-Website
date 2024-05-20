@@ -1,5 +1,14 @@
-import { fireStore } from './config';
-import { collection, doc, getDoc, getDocs, addDoc, updateDoc, deleteDoc, writeBatch } from 'firebase/firestore';
+import { fireStore } from "./config";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  writeBatch,
+} from "firebase/firestore";
 
 class FireStore {
   constructor(private collectionName: string) {}
@@ -11,27 +20,35 @@ class FireStore {
     if (docSnap.exists()) {
       return docSnap.data();
     } else {
-      throw new Error('Document not found');
+      throw new Error("Document not found");
     }
   }
 
   // Get all documents in the collection
   async getDocuments() {
-    const querySnapshot = await getDocs(collection(fireStore, this.collectionName));
-    const documents = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const querySnapshot = await getDocs(
+      collection(fireStore, this.collectionName),
+    );
+    const documents = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
     return documents;
   }
 
   // Add a single document
   async addDocument(data: any) {
-    const docRef = await addDoc(collection(fireStore, this.collectionName), data);
+    const docRef = await addDoc(
+      collection(fireStore, this.collectionName),
+      data,
+    );
     return docRef.id;
   }
 
   // Add multiple documents
   async addDocuments(dataArray: any[]) {
     const batch = writeBatch(fireStore);
-    dataArray.forEach(data => {
+    dataArray.forEach((data) => {
       const docRef = doc(collection(fireStore, this.collectionName));
       batch.set(docRef, data);
     });
@@ -63,7 +80,7 @@ class FireStore {
   // Delete multiple documents by ID
   async deleteDocuments(ids: string[]) {
     const batch = writeBatch(fireStore);
-    ids.forEach(id => {
+    ids.forEach((id) => {
       const docRef = doc(fireStore, this.collectionName, id);
       batch.delete(docRef);
     });
