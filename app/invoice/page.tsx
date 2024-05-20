@@ -3,24 +3,25 @@
 import { Add, Delete, Print, RemoveRedEye } from '@mui/icons-material'
 import { Button, Grid, IconButton, Typography, styled } from '@mui/material'
 import { DataGrid, GridColDef, GridToolbar,GridValueGetter } from '@mui/x-data-grid';
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { dummy_invoices } from '../utils/dummydata';
 import CreateInvoiceModal from '../components/CreateInvoiceModal';
+import FireStore from '../firebase/firestore';
 
-const columns: GridColDef<(typeof rows)[number]>[] = [
+const columns: GridColDef[] = [
   { field: 'id', headerName: 'ID', width: 90 },
   {
-    field: 'to',
+    field: 'clientName',
     headerName: 'To',
     width: 150,
   },
   {
-    field: 'phoneNumber',
+    field: 'clientPhone',
     headerName: 'Phone Number',
     width: 150,
   },
   {
-    field: 'email',
+    field: 'clientEmail',
     headerName: 'Email Address',
     width: 110,
   },
@@ -47,16 +48,37 @@ const columns: GridColDef<(typeof rows)[number]>[] = [
     valueGetter: (value, row) => row.items.map((item:any)=> `${item.name} (x${item.quantity})`).join(', '),
   },
   {
+    field: 'date',
+    headerName: 'Date',
+    width: 110,
+    renderCell: (params) => {
+const timestamp = params.row.date;
+
+const millisecondsFromSeconds = timestamp.seconds * 1000;
+
+const millisecondsFromNanoseconds = timestamp.nanoseconds / 1000000;
+
+const totalMilliseconds = millisecondsFromSeconds + millisecondsFromNanoseconds;
+
+const date = new Date(totalMilliseconds);
+      return new Date(date).toLocaleString();
+    }
+  },
+  {
     field: 'Options',
     headerName: 'Options',
     description: 'This column has a value getter and is not sortable.',
     sortable: false,
-    renderCell: () => {
+    renderCell: (params) => {
       return(
         <>
         <Grid container>
           <Grid item xs={4}>
-            <IconButton>
+            <IconButton onClick={() => {
+              let fireStore = new FireStore("Invoices");
+              fireStore.deleteDocument(params.row.id)
+              window.location.reload();
+            }}>
             <Delete/>
             </IconButton>
           </Grid>
@@ -78,27 +100,22 @@ const columns: GridColDef<(typeof rows)[number]>[] = [
   },
 ];
 
-const StyledDataGrid = styled(DataGrid)({
-  '& .MuiDataGrid-row': {
-    backgroundColor: 'blue',
-    '&:hover': {
-      backgroundColor: 'darkblue', // Optional: to change the color on hover
-    },
-    '& .MuiDataGrid-cell': {
-      color: 'white', // To ensure text is readable
-    },
-  },
-});
-
-const rows = dummy_invoices;
 
 const calculateTotal = (items: any[]): number =>
   items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0);
 
 function AdminPage() {
+  const [rows, setRows] = useState(dummy_invoices);
   const [createInvoiceModal, setCreateInvoiceModal] = React.useState<boolean>(false);
   const handleCreateOpen = () => setCreateInvoiceModal(true);
 
+  useEffect(() => {
+    (async () => {
+      let fireStore = new FireStore("Invoices")
+      let data:any[] = await fireStore.getDocuments();
+      setRows(data)
+    })()
+  },[])
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <Grid container>

@@ -1,12 +1,13 @@
 "use client"
 
-import * as React from 'react';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { Grid, IconButton, InputLabel, TextField } from '@mui/material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { Grid, TextField, IconButton, InputLabel } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
+import Typography from '@mui/material/Typography';
+import * as React from 'react';
+import FireStore from '../firebase/firestore';
 
 const style = {
   position: 'absolute' as const,
@@ -56,14 +57,14 @@ const CreateInvoiceModal: React.FC<CreateInvoiceModalProps> = ({ open, setOpen }
     setItems(updatedItems);
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const invoiceData = { clientName, clientEmail, clientPhone, items, paid };
-    console.log('Invoice Data:', invoiceData);
-    // Here you would send the data to your server
+    const invoiceData = { clientName, clientEmail, clientPhone, items, paid, date:new Date() };
+    let firestore = new FireStore("Invoices");
+    await firestore.addDocument(invoiceData);
     handleClose();
   };
-
+  
   return (
     <Modal
       open={open}

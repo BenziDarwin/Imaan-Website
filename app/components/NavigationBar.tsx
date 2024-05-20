@@ -27,25 +27,6 @@ import * as React from 'react';
 
 const drawerWidth = 240;
 
-const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
-  open?: boolean;
-}>(({ theme, open }) => ({
-  flexGrow: 1,
-  padding: theme.spacing(3),
-  transition: theme.transitions.create('margin', {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  marginLeft: `-${drawerWidth}px`,
-  ...(open && {
-    transition: theme.transitions.create('margin', {
-      easing: theme.transitions.easing.easeOut,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-    marginLeft: 0,
-  }),
-}));
-
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
 }
@@ -134,6 +115,9 @@ export default function NavigationBar() {
       setOpen(false);
     };
 
+    const navlinks = [{name:"Laptops", link:"/laptops"}, {name:"Bags", link:"/bags"}, {name:"Computer Accessories", link:"/computer-accessories"}]
+    const adminLinks = [{name:"Invoices", link:"/invoice"}]
+
 
   
 
@@ -207,7 +191,7 @@ export default function NavigationBar() {
 
   const handleItemClick = (drawer:string) => {
     switch (drawer) {
-      case "create invoice":
+      case "invoices":
         router.push("/invoice")
         break;
       default:
@@ -301,19 +285,27 @@ export default function NavigationBar() {
       component="nav"
       aria-labelledby="nested-list-subheader"
     >
-      <ListItemButton>
-        <ListItemText primary="All Categories" />
-      </ListItemButton>
+      {navlinks.map(item => {
+        return (
+          <ListItemButton onClick={() => router.push(item.link)}>
+          <ListItemText primary={item.name} />
+        </ListItemButton>
+        )
+      })}
       <ListItemButton onClick={handleClick}>
         <ListItemText primary="Admin" />
         {menuOpen ? <ExpandLess /> : <ExpandMore />}
       </ListItemButton>
       <Collapse in={menuOpen} timeout="auto" unmountOnExit>
-        <List component="div" disablePadding>
-          <ListItemButton sx={{ pl: 4 }} onClick={() => handleItemClick("create invoice")}>
-            <ListItemText primary="Create Invoice" />
-          </ListItemButton>
-        </List>
+        {adminLinks.map(item => {
+          return (
+            <List component="div" disablePadding>
+            <ListItemButton sx={{ pl: 4 }} onClick={() => handleItemClick(item.name.toLowerCase())}>
+              <ListItemText primary={item.name} />
+            </ListItemButton>
+          </List>
+          )
+        })}
       </Collapse>
     </List>
       </Drawer>
