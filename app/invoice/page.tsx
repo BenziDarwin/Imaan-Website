@@ -48,7 +48,7 @@ function generateInvoice(invoiceData: any): void {
   doc.text(`Bill To:`, 20, textStartY + 75);
   doc.text("Name: " +invoiceData.customer.name, 20, textStartY + 90);
   doc.text("Email:" + invoiceData.customer.address, 20, textStartY + 100);
-  doc.text("Phone Number: " + invoiceData.customer.address, 20, textStartY + 110);
+  doc.text("Phone Number: " + invoiceData.customer.phone, 20, textStartY + 110);
 
   // Draw items table
   const finalY = drawTable(doc, invoiceData.items, textStartY + 120);
@@ -244,6 +244,7 @@ const getPDFLink = async (invoice: any) => {
     customer: {
       name: body.clientName,
       address: body.clientEmail,
+      phone: body.clientPhone
     },
     items: body.line_items,
   };
