@@ -42,15 +42,16 @@ function generateInvoice(invoiceData: any): void {
     { align: "center" },
   );
 
-  doc.setFontSize(12);
+  doc.setFontSize(10);
   doc.text(`Invoice ID#: ${invoiceData.invoiceNumber}`, 20, textStartY + 50);
   doc.text(`Date: ${invoiceData.date}`, 20, textStartY + 60);
-  doc.text(`Bill To:`, 20, textStartY + 70);
-  doc.text(invoiceData.customer.name, 20, textStartY + 80);
-  doc.text(invoiceData.customer.address, 20, textStartY + 90);
+  doc.text(`Bill To:`, 20, textStartY + 75);
+  doc.text("Name: " +invoiceData.customer.name, 20, textStartY + 90);
+  doc.text("Email:" + invoiceData.customer.address, 20, textStartY + 100);
+  doc.text("Phone Number: " + invoiceData.customer.address, 20, textStartY + 110);
 
   // Draw items table
-  const finalY = drawTable(doc, invoiceData.items, textStartY + 100);
+  const finalY = drawTable(doc, invoiceData.items, textStartY + 120);
 
   // Calculate and display total
   const total: number = invoiceData.items.reduce(
@@ -230,7 +231,7 @@ const getPDFLink = async (invoice: any) => {
 
   // Example usage
   const sampleInvoiceData = {
-    logoUrl: "./images/logo.png", // Replace with actual logo URL
+    logoUrl: "./images/logo.jpg", // Replace with actual logo URL
     company: {
       name: "Imaan Computer World",
       address: "Kabaka Kintu House, Kampala Road",
