@@ -51,7 +51,7 @@ const columns: GridColDef<(typeof rows)[number]>[] = [
     headerName: 'Options',
     description: 'This column has a value getter and is not sortable.',
     sortable: false,
-    renderCell: () => {
+    renderCell: (param) => {
       return(
         <>
         <Grid container>
@@ -66,7 +66,9 @@ const columns: GridColDef<(typeof rows)[number]>[] = [
             </IconButton>
             </Grid>
             <Grid item xs={4}>
-            <IconButton>
+            <IconButton onClick={() => 
+              getPDFLink(param.row)
+            }>
             <Print/>
             </IconButton>
             </Grid>
@@ -94,6 +96,10 @@ const rows = dummy_invoices;
 
 const calculateTotal = (items: any[]): number =>
   items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0);
+
+const getPDFLink = (invoice:any) => {
+  console.log(invoice)
+}
 
 function AdminPage() {
   const [createInvoiceModal, setCreateInvoiceModal] = React.useState<boolean>(false);
