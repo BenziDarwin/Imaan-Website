@@ -98,6 +98,31 @@ const calculateTotal = (items: any[]): number =>
   items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0);
 
 const getPDFLink = (invoice:any) => {
+  const url = 'https://us1.pdfgeneratorapi.com/api/v4/documents/generate';
+  const token = 'REPLACE_BEARER_TOKEN';
+  const templateId = 'REPLACE_TEMPLATE_ID';
+
+  const data = {
+    template: {
+      id: templateId,
+      data: invoice
+    },
+    format: 'pdf',
+    output: 'base64',
+    name: invoice.clientName,
+  };
+
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`
+  };
+
+  try {
+    const response = await axios.post(url, data, { headers });
+    console.log(response.data);
+  } catch (error) {
+    console.error('Error generating document:', error);
+  }
   console.log(invoice)
 }
 
