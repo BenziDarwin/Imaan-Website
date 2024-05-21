@@ -274,6 +274,7 @@ export default function NavigationBar() {
         open={open}
       >
         <DrawerHeader>
+          <Image onClick={() => router.push("/")} src="/images/logo.jpg" alt="logo" width={150} height={150}/>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === "ltr" ? (
               <ChevronLeftIcon />
