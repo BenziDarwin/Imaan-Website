@@ -16,7 +16,7 @@ function generateInvoice(invoiceData: any): void {
   doc.addImage(invoiceData.logoUrl, "PNG", 15, 15, 50, 25);
 
   // Move text below the logo
-  const logoHeight = 50;
+  const logoHeight = 25;
   const textStartY = 15 + logoHeight + 10;
 
   // Company and Invoice Details
