@@ -7,7 +7,7 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import MenuIcon from "@mui/icons-material/Menu";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import SearchIcon from "@mui/icons-material/Search";
-import { Collapse, Drawer, useTheme } from "@mui/material";
+import { Button, Collapse, Drawer, useTheme } from "@mui/material";
 import {
   default as MuiAppBar,
   AppBarProps as MuiAppBarProps,
@@ -100,6 +100,8 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
+const pages = [{name:'Home', link:"/"}, { name:"About", link:"/about"}, {name:"Contact Us", link:"/contact-us"}];
+
 export default function NavigationBar() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const theme = useTheme();
@@ -183,6 +185,12 @@ export default function NavigationBar() {
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
+        {pages.map(page => {
+        return (
+          <>
+            <MenuItem key={page.name} onClick={() => router.push(page.link)}>{page.name}</MenuItem>
+          </>
+        )})}
       <MenuItem onClick={() => router.push("/login")}>
         <p>Login</p>
       </MenuItem>
@@ -206,7 +214,7 @@ export default function NavigationBar() {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
-        position="fixed"
+        position="relative"
         open={open}
         color="transparent"
         sx={{ boxShadow: "none" }}
@@ -235,6 +243,17 @@ export default function NavigationBar() {
             />
           </Search> 
           <Box sx={{ flexGrow: 1 }} />
+          <Box sx={{ flexGrow: 1.5, display: { xs: 'none', md: 'flex' } }}>
+            {pages.map((page) => (
+              <Button
+                key={page.name}
+                onClick={() => router.push(page.link)}
+                sx={{ my: 2, color: 'black', display: 'block' }}
+              >
+                {page.name}
+              </Button>
+            ))}
+          </Box>
           <Box sx={{ display: { xs: "none", md: "flex" } }}>
             <IconButton
               size="large"
