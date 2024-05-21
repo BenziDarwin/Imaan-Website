@@ -27,7 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className="bg-white text-black">
+        <div style={{backgroundColor:"white", color:"black"}}>
           <NavigationBar />
           {children}
         </div>
