@@ -8,6 +8,16 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Imaan Computer World",
   description: "Kampala's no. 1 Computer Store!",
+  openGraph: {
+    images: [
+      {
+        url: "/images/logo.jpg",
+        width: 800,
+        height: 600,
+        alt: "Imaan Computer World",
+      },
+    ],
+  },
 };
 
 export default function RootLayout({
