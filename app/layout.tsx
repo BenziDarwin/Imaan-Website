@@ -6,11 +6,18 @@ import NavigationBar from "./components/NavigationBar";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://imaan-website-kit7dhdem-innosolve.vercel.app"),
   title: "Imaan Computer World",
   description: "Kampala's no. 1 Computer Store!",
-  keywords: ["Computers", "Hardware", "Printers", "Scanners"],
   openGraph: {
-    images:  "/images/logo.jpg",
+    images: [
+      {
+        url: "/images/image.jpg",
+        width: 800,
+        height: 600,
+        alt: "Imaan Computer World",
+      },
+    ],
   },
 };
 
@@ -21,10 +28,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <link rel="icon" href="/images/favicon.ico" sizes="any" />
-        <link rel="shortcut icon" href="/images/favicon.ico" />
-      </head>
       <body className={inter.className}>
         <div className="bg-white text-black">
           <NavigationBar />
