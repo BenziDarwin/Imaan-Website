@@ -222,7 +222,9 @@ export default function NavigationBar() {
           >
             <MenuIcon />
           </IconButton>
+          <Box sx={{ display: { xs: "none", md: "flex" } }}>
           <Image onClick={() => router.push("/")} src="/images/logo.jpg" alt="logo" width={150} height={150}/>
+          </Box>
           <Search>
             <SearchIconWrapper>
               <SearchIcon />
@@ -274,7 +276,9 @@ export default function NavigationBar() {
         open={open}
       >
         <DrawerHeader>
+          <Box sx={{ display: { xs: "flex", md: "none" } }}>
           <Image onClick={() => router.push("/")} src="/images/logo.jpg" alt="logo" width={150} height={150}/>
+          </Box>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === "ltr" ? (
               <ChevronLeftIcon />
