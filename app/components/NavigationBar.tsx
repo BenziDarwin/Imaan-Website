@@ -24,6 +24,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { alpha, styled } from "@mui/material/styles";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 
@@ -221,15 +222,7 @@ export default function NavigationBar() {
           >
             <MenuIcon />
           </IconButton>
-          <Typography
-            variant="h6"
-            noWrap
-            component="div"
-            onClick={() => router.push("/")}
-            sx={{ display: { xs: "none", sm: "block" }, cursor: "pointer" }}
-          >
-            Imaan Computer World
-          </Typography>
+          <Image onClick={() => router.push("/")} src="/images/logo.jpg" alt="logo" width={150} height={150}/>
           <Search>
             <SearchIconWrapper>
               <SearchIcon />
@@ -238,7 +231,7 @@ export default function NavigationBar() {
               placeholder="Search…"
               inputProps={{ "aria-label": "search" }}
             />
-          </Search>
+          </Search> 
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: "none", md: "flex" } }}>
             <IconButton

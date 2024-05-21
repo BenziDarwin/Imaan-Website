@@ -6,18 +6,16 @@ import NavigationBar from "./components/NavigationBar";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://imaan-website-kit7dhdem-innosolve.vercel.app"),
   title: "Imaan Computer World",
   description: "Kampala's no. 1 Computer Store!",
+  keywords: ["Computers", "Hardware", "Printers", "Scanners"],
+  metadataBase:new URL("https://imaan-website-kit7dhdem-innosolve.vercel.app"),
   openGraph: {
-    images: [
-      {
-        url: "/images/image.jpg",
-        width: 800,
-        height: 600,
-        alt: "Imaan Computer World",
-      },
-    ],
+    type: 'website',
+    locale: 'en',
+    url: new URL("https://imaan-website-kit7dhdem-innosolve.vercel.app"),
+    siteName: 'Imaan Computer World',
+    images:  "/images/logo.jpg",
   },
 };
 
