@@ -75,9 +75,9 @@ const columns: GridColDef[] = [
           <Grid container>
             <Grid item xs={4}>
               <IconButton
-                onClick={() => {
+                onClick={async () => {
                   let fireStore = new FireStore("Invoices");
-                  fireStore.deleteDocument(param.row.id);
+                  await fireStore.deleteDocument(param.row.id);
                   window.location.reload();
                 }}
               >
