@@ -13,7 +13,7 @@ function generateInvoice(invoiceData: any): void {
   const pageWidth = doc.internal.pageSize.getWidth();
 
   // Load logo image
-  doc.addImage(invoiceData.logoUrl, "PNG", 15, 15, 50, 50);
+  doc.addImage(invoiceData.logoUrl, "PNG", 15, 15, 50, 25);
 
   // Move text below the logo
   const logoHeight = 50;
