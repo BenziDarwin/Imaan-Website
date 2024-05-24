@@ -8,10 +8,20 @@ import {
   updateDoc,
   deleteDoc,
   writeBatch,
+  setDoc,
 } from "firebase/firestore";
 
 class FireStore {
   constructor(private collectionName: string) {}
+
+  async assignRole(uid: string, role: string): Promise<void> {
+    try {
+      const userRef = doc(fireStore, 'users', uid);
+      await setDoc(userRef, { role }, { merge: true });
+    } catch (error) {
+      console.error("Error assigning role:", error);
+    }
+  }
 
   // Get a single document by ID
   async getDocument(id: string) {
