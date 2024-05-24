@@ -7,7 +7,7 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import MenuIcon from "@mui/icons-material/Menu";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import SearchIcon from "@mui/icons-material/Search";
-import { Collapse, Drawer, useTheme } from "@mui/material";
+import { Button, Collapse, Drawer, useTheme } from "@mui/material";
 import {
   default as MuiAppBar,
   AppBarProps as MuiAppBarProps,
@@ -24,8 +24,11 @@ import MenuItem from "@mui/material/MenuItem";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { alpha, styled } from "@mui/material/styles";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import * as React from "react";
+import Authentication from "../firebase/authentication";
+import { User } from "firebase/auth";
 
 const drawerWidth = 240;
 
@@ -80,6 +83,7 @@ const SearchIconWrapper = styled("div")(({ theme }) => ({
   height: "100%",
   position: "absolute",
   pointerEvents: "none",
+  zIndex:1,
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
@@ -99,8 +103,11 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
+const pages = [{name:'Home', link:"/"}, { name:"About", link:"/about"}, {name:"Contact Us", link:"/contact-us"}];
+
 export default function NavigationBar() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [user, setUser] = React.useState<User|null>();
   const theme = useTheme();
   const router = useRouter();
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
@@ -182,6 +189,12 @@ export default function NavigationBar() {
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
+        {pages.map(page => {
+        return (
+          <>
+            <MenuItem key={page.name} onClick={() => router.push(page.link)}>{page.name}</MenuItem>
+          </>
+        )})}
       <MenuItem onClick={() => router.push("/login")}>
         <p>Login</p>
       </MenuItem>
@@ -202,10 +215,15 @@ export default function NavigationBar() {
     }
   };
 
+  React.useEffect(() => {
+    let ner = new Authentication().getCurrentUser();
+    setUser(ner);
+  },[new Authentication().getCurrentUser()])
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
-        position="fixed"
+        position="relative"
         open={open}
         color="transparent"
         sx={{ boxShadow: "none" }}
@@ -221,15 +239,9 @@ export default function NavigationBar() {
           >
             <MenuIcon />
           </IconButton>
-          <Typography
-            variant="h6"
-            noWrap
-            component="div"
-            onClick={() => router.push("/")}
-            sx={{ display: { xs: "none", sm: "block" }, cursor: "pointer" }}
-          >
-            Imaan Computer World
-          </Typography>
+          <Box sx={{ display: { xs: "none", md: "flex" } }}>
+          <Image onClick={() => router.push("/")} src="/images/logo.jpg" alt="logo" width={150} height={150}/>
+          </Box>
           <Search>
             <SearchIconWrapper>
               <SearchIcon />
@@ -238,8 +250,19 @@ export default function NavigationBar() {
               placeholder="Search…"
               inputProps={{ "aria-label": "search" }}
             />
-          </Search>
+          </Search> 
           <Box sx={{ flexGrow: 1 }} />
+          <Box sx={{ flexGrow: 1.5, display: { xs: 'none', md: 'flex' } }}>
+            {pages.map((page) => (
+              <Button
+                key={page.name}
+                onClick={() => router.push(page.link)}
+                sx={{ my: 2, color: 'black', display: 'block' }}
+              >
+                {page.name}
+              </Button>
+            ))}
+          </Box>
           <Box sx={{ display: { xs: "none", md: "flex" } }}>
             <IconButton
               size="large"
@@ -281,6 +304,9 @@ export default function NavigationBar() {
         open={open}
       >
         <DrawerHeader>
+          <Box sx={{ display: { xs: "flex", md: "none" } }}>
+          <Image onClick={() => router.push("/")} src="/images/logo.jpg" alt="logo" width={150} height={150}/>
+          </Box>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === "ltr" ? (
               <ChevronLeftIcon />
@@ -302,12 +328,15 @@ export default function NavigationBar() {
               </ListItemButton>
             );
           })}
-          <ListItemButton onClick={handleClick}>
+          {new Authentication().getCurrentUser() ? <>
+            <ListItemButton onClick={handleClick}>
             <ListItemText primary="Admin" />
             {menuOpen ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
           <Collapse in={menuOpen} timeout="auto" unmountOnExit>
-            {adminLinks.map((item) => {
+            {sessionStorage.getItem("user") ? 
+            JSON.parse(sessionStorage.getItem("user")!).role === "Admin" ? 
+            adminLinks.map((item) => {
               return (
                 <List component="div" disablePadding>
                   <ListItemButton
@@ -318,8 +347,16 @@ export default function NavigationBar() {
                   </ListItemButton>
                 </List>
               );
-            })}
-          </Collapse>
+            }):<List component="div" disablePadding>
+            <ListItemButton
+              sx={{ pl: 4 }}
+              onClick={() => null}
+            >
+              <ListItemText primary={"Something"} />
+            </ListItemButton>
+          </List>:null }
+          </Collapse></>: null}
+        
         </List>
       </Drawer>
       {renderMobileMenu}

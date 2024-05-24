@@ -28,6 +28,8 @@ class Authentication {
     async signIn(email: string, password: string): Promise<User | null> {
       try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        let response = await new FireStore("users").getDocument(email);
+        sessionStorage.setItem("user", JSON.stringify(response));
         return userCredential.user;
       } catch (error) {
         console.error("Error signing in:", error);
@@ -54,8 +56,11 @@ class Authentication {
     }
   
     // Observe user state changes
-    onAuthStateChanged(callback: (user: User | null) => void): void {
-      onAuthStateChanged(auth, callback);
+    onAuthStateChanged(): void {
+      onAuthStateChanged(auth, async () => {
+        let response = await new FireStore("users").getDocument(auth.currentUser!.email!);
+        sessionStorage.setItem("user", JSON.stringify(response));
+      });
     }
   
     // Get the current authenticated user
