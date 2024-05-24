@@ -168,7 +168,11 @@ export default function NavigationBar() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={() => router.push("/login")}>Login</MenuItem>
+      {new Authentication().getCurrentUser() ? <MenuItem onClick={() => {
+        new Authentication().signOut();
+        sessionStorage.clear();
+        window.location.reload();
+      }}>Login</MenuItem>: <MenuItem onClick={() => router.push("/login")}>Login</MenuItem> }
     </Menu>
   );
 
