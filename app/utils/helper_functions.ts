@@ -38,7 +38,7 @@ export function generateInvoice(invoiceData: any): void {
     doc.text(`Invoice ID#: ${invoiceData.invoiceNumber}`, 20, textStartY + 50);
     doc.text(`Date: ${invoiceData.date}`, 20, textStartY + 60);
     doc.text(`Bill To:`, 20, textStartY + 75);
-    doc.text("Name: " +invoiceData.customer.name, 20, textStartY + 90);
+    doc.text("Name: " + invoiceData.customer.name, 20, textStartY + 90);
     doc.text("Email:" + invoiceData.customer.address, 20, textStartY + 100);
     doc.text("Phone Number: " + invoiceData.customer.phone, 20, textStartY + 110);
   
@@ -54,7 +54,7 @@ export function generateInvoice(invoiceData: any): void {
     const remainingAmount = total - amountPaid;
   
     doc.setFontSize(12);
-    doc.setFont("", "", "Bold");
+    doc.setFont("helvetica", "bold");
     doc.text(`Total: ${total.toLocaleString()} UGX`, 20, finalY + 10);
     doc.text(`Amount Paid: ${amountPaid.toLocaleString()} UGX`, 20, finalY + 20);
     doc.text(
@@ -67,45 +67,64 @@ export function generateInvoice(invoiceData: any): void {
     doc.save(`Invoice_${invoiceData.invoiceNumber}.pdf`);
   }
 
-function drawTable(doc: jsPDF, items: any[], startY: number): number {
+  function drawTable(doc: jsPDF, items: any[], startY: number): number {
     doc.setFontSize(10);
     const pageWidth = doc.internal.pageSize.getWidth();
+    const cellPadding = 2;
+    const colWidths = [80, 20, 30, 30]; // Adjusted column widths (description column increased)
   
     // Table headers
     doc.setDrawColor(0);
     doc.setFillColor(221, 221, 221); // Light grey fill
     const headerHeight = 10;
     doc.rect(20, startY, pageWidth - 40, headerHeight, "FD"); // 'FD' means fill and draw border
-    doc.text("Description", 35, startY + 7);
-    doc.text("Quantity", 100, startY + 7);
+    doc.text("Description", 25, startY + 7);
+    doc.text("Quantity", 105, startY + 7); // Adjusted positions based on new widths
     doc.text("Price", 135, startY + 7);
     doc.text("Total", 165, startY + 7);
   
-    startY += 10;
+    startY += headerHeight;
   
     // Table rows
     items.forEach((item) => {
       doc.setFillColor(255, 255, 255); // White fill for rows
-      const cellHeight = Math.max(doc.getTextDimensions(item.name).h, 10);
-      doc.rect(20, startY, pageWidth - 40, cellHeight, "FD"); // Draw and fill row background
-      doc.textWithLink(item.name, 35, startY + 7, { maxWidth: 35 });
-      doc.text(item.quantity.toLocaleString(), 100, startY + 7, {
-        align: "left",
-      });
-      doc.text(`${item.unitPrice.toLocaleString()} UGX`, 135, startY + 7, {
-        align: "left",
-      });
-      doc.text(
-        `${(item.quantity * item.unitPrice).toLocaleString()} UGX`,
-        165,
-        startY + 7,
-        { align: "left" },
-      );
-      startY += 10;
+
+      // Split text for wrapping
+      const descLines = doc.splitTextToSize(item.name, colWidths[0]);
+      const quantityLines = doc.splitTextToSize(item.quantity.toString(), colWidths[1]);
+      const priceLines = doc.splitTextToSize(item.unitPrice.toString(), colWidths[2]);
+      const totalLines = doc.splitTextToSize((item.quantity * item.unitPrice).toString(), colWidths[3]);
+
+      // Calculate the height of the cell based on the longest wrapped text
+      const maxLines = Math.max(descLines.length, quantityLines.length, priceLines.length, totalLines.length);
+      const textHeight = doc.getTextDimensions('M').h;
+      const cellHeight = (textHeight * maxLines) + (cellPadding * 2) + 2;
+
+      // Draw row background
+      doc.rect(20, startY, pageWidth - 40, cellHeight, "FD");
+
+      // Draw column lines
+      doc.line(100, startY, 100, startY + cellHeight); // Line after description (adjusted)
+      doc.line(120, startY, 120, startY + cellHeight); // Line after quantity (adjusted)
+      doc.line(150, startY, 150, startY + cellHeight); // Line after price (adjusted)
+
+      // Vertically center the text
+      const textY = startY + cellPadding + textHeight;
+
+      // Add text
+      descLines.forEach((line:any, i:any) => doc.text(line, 20, textY + (i * textHeight)));
+      quantityLines.forEach((line:any, i:any) => doc.text(parseInt(line).toLocaleString(), 105, textY + (i * textHeight))); // Adjusted positions
+      priceLines.forEach((line:any, i:any) => doc.text(parseInt(line).toLocaleString(), 130, textY + (i * textHeight)));
+      totalLines.forEach((line:any, i:any) => doc.text(parseInt(line).toLocaleString(), 165, textY + (i * textHeight)));
+
+      startY += cellHeight;
     });
   
     return startY; // Return the Y position after the table
   }
+
+
+
 
 export const getPDFLink = async (invoice: any) => {
     const timestamp = invoice.date;
@@ -129,8 +148,8 @@ export const getPDFLink = async (invoice: any) => {
       logoUrl: "./images/logo.jpg", // Replace with actual logo URL
       company: {
         name: "Imaan Computer World",
-        address: "Kabaka Kintu House, Kampala Road",
-        phone: "(256) 757-443046",
+        address: "Kabaka Kintu House, Kampala Road, Shop C04",
+        phone: "(+256) 39-3256605",
         email: "info@imaancomputerworld.com",
       },
       invoiceNumber: body.id,
