@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description: "Kampala's no. 1 Computer Store!",
   keywords: ["Computers", "Hardware", "Printers", "Scanners"],
   icons: {
-    icon: "/favicon.ico",
+    icon: "/icon.ico",
   }
 };
 
