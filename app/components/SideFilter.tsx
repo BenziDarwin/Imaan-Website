@@ -16,10 +16,10 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import SearchIcon from '@mui/icons-material/Search';
 
-const Filters = () => {
+const SideFilter = () => {
   return (
     <Grid container spacing={2}>
-      <Grid item xs={12} md={3} sx={{ maxWidth: { xs: '100%', md: 'md' }, mx: { xs: 'auto', md: 'unset' } }}>
+      <Grid item xs={12} md={3} sx={{ maxWidth: { xs: '100%', md: 'lg' }, mx: { xs: 'auto', md: 'unset' } }}>
         <Box
           sx={{
             border: '1px solid',
@@ -177,11 +177,8 @@ const Filters = () => {
           />
         </Box>
       </Grid>
-      <Grid item xs={12} md={9}>
-        {/* Add your content here */}
-      </Grid>
     </Grid>
   );
 };
 
-export default Filters;
+export default SideFilter;
