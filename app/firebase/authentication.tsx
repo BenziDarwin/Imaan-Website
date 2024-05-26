@@ -56,7 +56,7 @@ class Authentication {
     }
   
     // Observe user state changes
-    onAuthStateChanged(): void {
+    onAuthStateChanged():void {
       onAuthStateChanged(auth, async () => {
         let response = await new FireStore("users").getDocument(auth.currentUser!.email!);
         sessionStorage.setItem("user", JSON.stringify(response));

@@ -28,7 +28,8 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 import Authentication from "../firebase/authentication";
-import { User } from "firebase/auth";
+import { User, onAuthStateChanged } from "firebase/auth";
+import { auth } from "../firebase/config";
 
 const drawerWidth = 240;
 
@@ -107,7 +108,7 @@ const pages = [{name:'Home', link:"/"}, { name:"About", link:"/about"}, {name:"C
 
 export default function NavigationBar() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [user, setUser] = React.useState<User|null>();
+  const [user, setUser] = React.useState<User|null>(null);
   const theme = useTheme();
   const router = useRouter();
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
@@ -168,11 +169,11 @@ export default function NavigationBar() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      {new Authentication().getCurrentUser() ? <MenuItem onClick={() => {
+      {user !== null ? <MenuItem onClick={() => {
         new Authentication().signOut();
         sessionStorage.clear();
         window.location.reload();
-      }}>Login</MenuItem>: <MenuItem onClick={() => router.push("/login")}>Login</MenuItem> }
+      }}>Logout</MenuItem>: <MenuItem onClick={() => router.push("/login")}>Login</MenuItem> }
     </Menu>
   );
 
@@ -220,9 +221,11 @@ export default function NavigationBar() {
   };
 
   React.useEffect(() => {
-    let ner = new Authentication().getCurrentUser();
-    setUser(ner);
-  },[new Authentication().getCurrentUser()])
+      onAuthStateChanged(auth, async () => {
+        console.log(auth.currentUser)
+          setUser(auth.currentUser)
+      });
+  },[user])
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -332,7 +335,7 @@ export default function NavigationBar() {
               </ListItemButton>
             );
           })}
-          {new Authentication().getCurrentUser() ? <>
+          {user ? <>
             <ListItemButton onClick={handleClick}>
             <ListItemText primary="Admin" />
             {menuOpen ? <ExpandLess /> : <ExpandMore />}
