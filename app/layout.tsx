@@ -11,13 +11,7 @@ export const metadata: Metadata = {
   keywords: ["Computers", "Hardware", "Printers", "Scanners"],
   icons: {
     icon: "/favicon.ico",
-  },
-  openGraph: {
-    type: 'website',
-    locale: 'en',
-    siteName: 'Imaan Computer World',
-    images:  "/favicon.ico",
-  },
+  }
 };
 
 export default function RootLayout({
