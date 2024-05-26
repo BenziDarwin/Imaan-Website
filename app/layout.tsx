@@ -9,14 +9,12 @@ export const metadata: Metadata = {
   title: "Imaan Computer World",
   description: "Kampala's no. 1 Computer Store!",
   keywords: ["Computers", "Hardware", "Printers", "Scanners"],
-  metadataBase:new URL("https://imaan-website-kit7dhdem-innosolve.vercel.app"),
   icons: {
     icon: "/favicon.ico",
   },
   openGraph: {
     type: 'website',
     locale: 'en',
-    url: new URL("https://imaan-website-kit7dhdem-innosolve.vercel.app"),
     siteName: 'Imaan Computer World',
     images:  "/favicon.ico",
   },
