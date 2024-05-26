@@ -10,6 +10,9 @@ export const metadata: Metadata = {
   description: "Kampala's no. 1 Computer Store!",
   keywords: ["Computers", "Hardware", "Printers", "Scanners"],
   metadataBase:new URL("https://imaan-website-kit7dhdem-innosolve.vercel.app"),
+  icons: {
+    icon: "/favicon.ico",
+  },
   openGraph: {
     type: 'website',
     locale: 'en',
