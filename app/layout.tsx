@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     locale: 'en',
     url: new URL("https://imaan-website-kit7dhdem-innosolve.vercel.app"),
     siteName: 'Imaan Computer World',
-    images:  "/images/logo.jpg",
+    images:  "/favicon.ico",
   },
 };
 
