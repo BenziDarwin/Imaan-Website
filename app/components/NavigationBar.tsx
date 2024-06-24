@@ -1,37 +1,14 @@
 "use client";
 
-import { ExpandLess, ExpandMore } from "@mui/icons-material";
-import AccountCircle from "@mui/icons-material/AccountCircle";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import CloseIcon from '@mui/icons-material/Close';
 import MenuIcon from "@mui/icons-material/Menu";
-import MoreIcon from "@mui/icons-material/MoreVert";
-import SearchIcon from "@mui/icons-material/Search";
-import { Button, Collapse, Drawer, useTheme } from "@mui/material";
 import {
-  default as MuiAppBar,
-  AppBarProps as MuiAppBarProps,
+  AppBarProps as MuiAppBarProps
 } from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Divider from "@mui/material/Divider";
-import IconButton from "@mui/material/IconButton";
-import InputBase from "@mui/material/InputBase";
-import List from "@mui/material/List";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemText from "@mui/material/ListItemText";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import { alpha, styled } from "@mui/material/styles";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import * as React from "react";
-import Authentication from "../firebase/authentication";
 import { User, onAuthStateChanged } from "firebase/auth";
+import { usePathname, useRouter } from "next/navigation";
+import * as React from "react";
 import { auth } from "../firebase/config";
-import { usePathname } from 'next/navigation';
 const drawerWidth = 240;
 
 interface AppBarProps extends MuiAppBarProps {
@@ -43,52 +20,16 @@ interface AppBarProps extends MuiAppBarProps {
 const pages = [{name:'Home', link:"/"}, { name:"About", link:"/about"}, {name:"Contact Us", link:"/contact-us"}];
 
 export default function NavigationBar() {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [user, setUser] = React.useState<User|null>(null);
-  const theme = useTheme();
   const router = useRouter();
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
     React.useState<null | HTMLElement>(null);
-
-
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
-
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
 
   const navlinks = [
     { name: 'Home', link: '/' },
-    { name: 'About', link: '#about' },
-    { name: 'Contact Us', link: '#Contact Us' },
     { name: 'Products', link: '/products' },
-    
   ];
 
   const adminLinks = [{ name: "Invoices", link: "/invoice" }];
-
-  const isMenuOpen = Boolean(anchorEl);
-  const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-
-  const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMobileMenuClose = () => {
-    setMobileMoreAnchorEl(null);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-    handleMobileMenuClose();
-  };
-
-  const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setMobileMoreAnchorEl(event.currentTarget);
-  };
-
   const pathname = usePathname();
   
   React.useEffect(() => {
@@ -104,7 +45,7 @@ export default function NavigationBar() {
     <div className="flex flex-row items-center w-full border-b p-3 shadow-sm gap-8 bg-white">
       {/* Brand */}
       <div className="flex flex-row items-center gap-3 text-lg font-medium">
-        <img src="/images/logo.jpg" class="h-12" />
+        <img src="/images/logo.jpg" className="h-12" />
       </div>
 
       <div className="flex flex-row gap-4 items-center hidden md:flex">
@@ -132,7 +73,7 @@ export default function NavigationBar() {
                 <div className="flex flex-row">
                 </div>
                 <div className="flex flex-row items-start">
-                  <img src="/images/logo.jpg" class="w-full" />
+                  <img src="/images/logo.jpg" className="w-full" />
                   <button onClick={ () => { setMobileNavVisible(false)}} className="p-2 border rounded-full ml-auto text-gray-500 shadow-sm">
                     <CloseIcon />
                   </button>
@@ -147,8 +88,7 @@ export default function NavigationBar() {
                   }
                 </div>
                 <div className="flex flex-col gap-2 mt-auto">
-                  <button className="px-4 border-2 border-primary-400 rounded-full text-primary-500 py-2 font-medium transition-all duration-300 ease-in-out">Sign In</button>
-                  <button className="px-4 bg-primary-500 text-white py-2 font-medium shadow rounded-full transition-all duration-300 ease-in-out">Get started</button>
+                  <button onClick={() => router.push("/login")} className="px-4 border-2 border-primary-400 rounded-full text-primary-500 py-2 font-medium transition-all duration-300 ease-in-out">Sign In</button>
                 </div>
             </div>
           </div> }

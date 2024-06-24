@@ -125,7 +125,7 @@ export default function Home() {
         <div className="flex flex-col items-center md:items-start gap-4 text-gray-700">
           <span className="text-4xl text-center md:text-left font-bold">Most affordable computer appliances in kampala</span>
           <div className="flex flex-col w-full gap-3">
-            <span class="text-center md:text-left">Imaan Computer World is the best place to find any computer related accessory or gadget for your home or your business.</span>
+            <span className="text-center md:text-left">Imaan Computer World is the best place to find any computer related accessory or gadget for your home or your business.</span>
 
             <div className="flex flex-col md:flex-row gap-3">
               <button onClick={ () => { router.push('/products') } } className="bg-primary-100/40 px-6 py-2 rounded-full text-lg font-medium text-primary-500 border border-primary-500">View Products</button>
@@ -133,8 +133,8 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div class="w-full flex flex-col">
-          <div class="bg-gray-300 w-full h-full"></div>
+        <div className="w-full flex flex-col">
+          <div className="bg-gray-300 w-full h-full"></div>
         </div>
         
       </div>
@@ -161,7 +161,7 @@ export default function Home() {
       </div>
 
       {/* Contact Us */}
-      <div className="flex flex-col md:items-center py-8 bg-gray-100">
+      <div id="#contact-us" className="flex flex-col md:items-center py-8 bg-gray-100">
         <div className="flex flex-col gap-5 md:flex-row md:w-[75%] p-3 md:p-0">
           <div className="flex flex-col text-center md:text-left md:items-start items-center gap-3">
             <span className="text-2xl font-semibold">Contact Us</span>
@@ -200,7 +200,7 @@ export default function Home() {
               </div>
 
               <div className="focus-within:ring-2 ring-gray-500 bg-gray-200 p-3 w-full rounded-lg flex flex-row gap-2 items-center text-gray-500">
-                <textarea rows="8" className="focus:ring-0 bg-transparent w-full border-0 p-0 text-gray-700" placeholder="Your Message"></textarea>
+                <textarea rows={8} className="focus:ring-0 bg-transparent w-full border-0 p-0 text-gray-700" placeholder="Your Message"></textarea>
               </div>
 
               <button className="px-6 py-2 rounded-full text-lg font-medium text-primary-500 border border-primary-500">Send Message</button>
