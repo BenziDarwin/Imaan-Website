@@ -23,8 +23,12 @@ export default function NavigationBar() {
   
   React.useEffect(() => {
       onAuthStateChanged(auth, async () => {
-        console.log(auth.currentUser)
-          setUser(auth.currentUser)
+        if (auth.currentUser) {
+          sessionStorage.setItem("user", auth.currentUser.email!);
+          setUser(auth.currentUser);
+      } else {
+          setUser(null);
+      }
       });
   },[user])
 
