@@ -14,7 +14,9 @@ export default function SignIn() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    await new Authentication().signIn(data.get("email")!.toString()!, data.get("password")!.toString());
+    await new Authentication().signIn(data.get("email")!.toString()!, data.get("password")!.toString()).then(() => {
+      window.location.href = "/";
+    } );
   };
 
   return (
