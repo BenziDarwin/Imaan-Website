@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import NavigationBar from "./components/NavigationBar";
+import Footer from "./components/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,7 +29,9 @@ export default function RootLayout({
           {/* wrapped to fix overflow issues */}
           <div className="flex flex-col overflow-y-scroll h-full w-full">
             {children}
+            <Footer/>
           </div>
+        
         </div>
       </body>
     </html>
