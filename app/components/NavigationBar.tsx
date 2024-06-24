@@ -1,225 +1,26 @@
 "use client";
 
-import { ExpandLess, ExpandMore } from "@mui/icons-material";
-import AccountCircle from "@mui/icons-material/AccountCircle";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import CloseIcon from '@mui/icons-material/Close';
 import MenuIcon from "@mui/icons-material/Menu";
-import MoreIcon from "@mui/icons-material/MoreVert";
-import SearchIcon from "@mui/icons-material/Search";
-import { Button, Collapse, Drawer, useTheme } from "@mui/material";
-import {
-  default as MuiAppBar,
-  AppBarProps as MuiAppBarProps,
-} from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Divider from "@mui/material/Divider";
-import IconButton from "@mui/material/IconButton";
-import InputBase from "@mui/material/InputBase";
-import List from "@mui/material/List";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemText from "@mui/material/ListItemText";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import { alpha, styled } from "@mui/material/styles";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import * as React from "react";
-import Authentication from "../firebase/authentication";
 import { User, onAuthStateChanged } from "firebase/auth";
+import { usePathname, useRouter } from "next/navigation";
+import * as React from "react";
 import { auth } from "../firebase/config";
-
-const drawerWidth = 240;
-
-interface AppBarProps extends MuiAppBarProps {
-  open?: boolean;
-}
-
-const AppBar = styled(MuiAppBar, {
-  shouldForwardProp: (prop) => prop !== "open",
-})<AppBarProps>(({ theme, open }) => ({
-  transition: theme.transitions.create(["margin", "width"], {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  ...(open && {
-    width: `calc(100% - ${drawerWidth}px)`,
-    marginLeft: `${drawerWidth}px`,
-    transition: theme.transitions.create(["margin", "width"], {
-      easing: theme.transitions.easing.easeOut,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  }),
-}));
-
-const DrawerHeader = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
-  ...theme.mixins.toolbar,
-  justifyContent: "flex-end",
-}));
-
-const Search = styled("div")(({ theme }) => ({
-  position: "relative",
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
-  "&:hover": {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
-  },
-  marginRight: theme.spacing(2),
-  marginLeft: 0,
-  width: "100%",
-  [theme.breakpoints.up("sm")]: {
-    marginLeft: theme.spacing(3),
-    width: "auto",
-  },
-}));
-
-const SearchIconWrapper = styled("div")(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: "100%",
-  position: "absolute",
-  pointerEvents: "none",
-  zIndex:1,
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-}));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: "inherit",
-  "& .MuiInputBase-input": {
-    padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create("width"),
-    width: "100%",
-    [theme.breakpoints.up("md")]: {
-      width: "20ch",
-    },
-  },
-}));
-
-const pages = [{name:'Home', link:"/"}, { name:"About", link:"/about"}, {name:"Contact Us", link:"/contact-us"}];
+import Authentication from '../firebase/authentication';
 
 export default function NavigationBar() {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [user, setUser] = React.useState<User|null>(null);
-  const theme = useTheme();
   const router = useRouter();
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
     React.useState<null | HTMLElement>(null);
 
-  const [open, setOpen] = React.useState(false);
-  const [menuOpen, setMenuOpen] = React.useState<any>(false);
-
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
-
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
-
   const navlinks = [
-    { name: "Laptops", link: "/laptops" },
-    { name: "Bags", link: "/bags" },
-    { name: "Computer Accessories", link: "/computer-accessories" },
+    { name: 'Home', link: '/' },
+    { name: 'Products', link: '/products' },
   ];
-  const adminLinks = [{ name: "Invoices", link: "/invoice" }];
 
-  const isMenuOpen = Boolean(anchorEl);
-  const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-
-  const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMobileMenuClose = () => {
-    setMobileMoreAnchorEl(null);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-    handleMobileMenuClose();
-  };
-
-  const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setMobileMoreAnchorEl(event.currentTarget);
-  };
-
-  const menuId = "primary-search-account-menu";
-  const renderMenu = (
-    <Menu
-      anchorEl={anchorEl}
-      anchorOrigin={{
-        vertical: "top",
-        horizontal: "right",
-      }}
-      id={menuId}
-      keepMounted
-      transformOrigin={{
-        vertical: "top",
-        horizontal: "right",
-      }}
-      open={isMenuOpen}
-      onClose={handleMenuClose}
-    >
-      {user !== null ? <MenuItem onClick={() => {
-        new Authentication().signOut();
-        sessionStorage.clear();
-        window.location.reload();
-      }}>Logout</MenuItem>: <MenuItem onClick={() => router.push("/login")}>Login</MenuItem> }
-    </Menu>
-  );
-
-  const mobileMenuId = "primary-search-account-menu-mobile";
-  const renderMobileMenu = (
-    <Menu
-      anchorEl={mobileMoreAnchorEl}
-      anchorOrigin={{
-        vertical: "top",
-        horizontal: "right",
-      }}
-      id={mobileMenuId}
-      keepMounted
-      transformOrigin={{
-        vertical: "top",
-        horizontal: "right",
-      }}
-      open={isMobileMenuOpen}
-      onClose={handleMobileMenuClose}
-    >
-        {pages.map(page => {
-        return (
-          <>
-            <MenuItem key={page.name} onClick={() => router.push(page.link)}>{page.name}</MenuItem>
-          </>
-        )})}
-      <MenuItem onClick={() => router.push("/login")}>
-        <p>Login</p>
-      </MenuItem>
-    </Menu>
-  );
-
-  const handleClick = () => {
-    setMenuOpen(!menuOpen);
-  };
-
-  const handleItemClick = (drawer: string) => {
-    switch (drawer) {
-      case "invoices":
-        router.push("/invoice");
-        break;
-      default:
-        break;
-    }
-  };
-
+  const adminLinks = [{ name: "Invoices", link: "/invoice" }, { name: "Add Item", link: "/add-item" } ];
+  const pathname = usePathname();
+  
   React.useEffect(() => {
       onAuthStateChanged(auth, async () => {
         console.log(auth.currentUser)
@@ -227,147 +28,66 @@ export default function NavigationBar() {
       });
   },[user])
 
+  const [mobileNavVisible, setMobileNavVisible] = React.useState(false);
+
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar
-        position="relative"
-        open={open}
-        color="transparent"
-        sx={{ boxShadow: "none" }}
-      >
-        <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Box sx={{ display: { xs: "none", md: "flex" } }}>
-          <Image onClick={() => router.push("/")} src="/images/logo.jpg" alt="logo" width={150} height={150}/>
-          </Box>
-          <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search…"
-              inputProps={{ "aria-label": "search" }}
-            />
-          </Search> 
-          <Box sx={{ flexGrow: 1 }} />
-          <Box sx={{ flexGrow: 1.5, display: { xs: 'none', md: 'flex' } }}>
-            {pages.map((page) => (
-              <Button
-                key={page.name}
-                onClick={() => router.push(page.link)}
-                sx={{ my: 2, color: 'black', display: 'block' }}
-              >
-                {page.name}
-              </Button>
-            ))}
-          </Box>
-          <Box sx={{ display: { xs: "none", md: "flex" } }}>
-            <IconButton
-              size="large"
-              edge="end"
-              aria-label="account of current user"
-              aria-controls={menuId}
-              aria-haspopup="true"
-              onClick={handleProfileMenuOpen}
-              color="inherit"
-            >
-              <AccountCircle />
-            </IconButton>
-          </Box>
-          <Box sx={{ display: { xs: "flex", md: "none" } }}>
-            <IconButton
-              size="large"
-              aria-label="show more"
-              aria-controls={mobileMenuId}
-              aria-haspopup="true"
-              onClick={handleMobileMenuOpen}
-              color="inherit"
-            >
-              <MoreIcon />
-            </IconButton>
-          </Box>
-        </Toolbar>
-      </AppBar>
-      <Drawer
-        sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          "& .MuiDrawer-paper": {
-            width: drawerWidth,
-            boxSizing: "border-box",
-          },
-        }}
-        variant="persistent"
-        anchor="left"
-        open={open}
-      >
-        <DrawerHeader>
-          <Box sx={{ display: { xs: "flex", md: "none" } }}>
-          <Image onClick={() => router.push("/")} src="/images/logo.jpg" alt="logo" width={150} height={150}/>
-          </Box>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === "ltr" ? (
-              <ChevronLeftIcon />
-            ) : (
-              <ChevronRightIcon />
-            )}
-          </IconButton>
-        </DrawerHeader>
-        <Divider />
-        <List
-          sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
-          component="nav"
-          aria-labelledby="nested-list-subheader"
-        >
-          {navlinks.map((item) => {
+    <div className="flex flex-row items-center w-full border-b p-3 shadow-sm gap-8 bg-white">
+      <div className="flex flex-row items-center gap-3 text-lg font-medium">
+        <img src="/images/logo.jpg" className="h-12" />
+      </div>
+
+      <div className="flex flex-row gap-4 items-center hidden md:flex">
+        {
+          navlinks.map( (link) => {
             return (
-              <ListItemButton onClick={() => router.push(item.link)}>
-                <ListItemText primary={item.name} />
-              </ListItemButton>
-            );
-          })}
-          {user ? <>
-            <ListItemButton onClick={handleClick}>
-            <ListItemText primary="Admin" />
-            {menuOpen ? <ExpandLess /> : <ExpandMore />}
-          </ListItemButton>
-          <Collapse in={menuOpen} timeout="auto" unmountOnExit>
-            {sessionStorage.getItem("user") ? 
-            JSON.parse(sessionStorage.getItem("user")!).role === "Admin" ? 
-            adminLinks.map((item) => {
-              return (
-                <List component="div" disablePadding>
-                  <ListItemButton
-                    sx={{ pl: 4 }}
-                    onClick={() => handleItemClick(item.name.toLowerCase())}
-                  >
-                    <ListItemText primary={item.name} />
-                  </ListItemButton>
-                </List>
-              );
-            }):<List component="div" disablePadding>
-            <ListItemButton
-              sx={{ pl: 4 }}
-              onClick={() => null}
-            >
-              <ListItemText primary={"Something"} />
-            </ListItemButton>
-          </List>:null }
-          </Collapse></>: null}
-        
-        </List>
-      </Drawer>
-      {renderMobileMenu}
-      {renderMenu}
-    </Box>
+              <button onClick={ () => { router.push(link.link) } } className={`transition-all ease-in-out duration-300 ease-in-out hover:text-primary-500 flex flex-row py-2 rounded-lg px-3 ${ link.link === pathname ? 'bg-primary-100/40 text-primary-500' : '' }`}>{link.name}</button>
+            )
+          })
+        }
+        {user?
+          adminLinks.map( (link) => {
+            return (
+              <button onClick={ () => { router.push(link.link) } } className={`transition-all ease-in-out duration-300 ease-in-out hover:text-primary-500 flex flex-row py-2 rounded-lg px-3 ${ link.link === pathname ? 'bg-primary-100/40 text-primary-500' : '' }`}>{link.name}</button>
+            )
+          })
+        :null}
+      </div>
+
+      <div className="flex flex-row gap-2 ml-auto hidden md:flex">
+      {user ? <button onClick={async () => await new Authentication().signOut()} className="px-4 border-2 border-primary-400 rounded-full text-primary-500 py-2 font-medium transition-all duration-300 ease-in-out">Sign Out</button> :
+                  <button onClick={() => router.push("/login")} className="px-4 border-2 border-primary-400 rounded-full text-primary-500 py-2 font-medium transition-all duration-300 ease-in-out">Sign In</button>}
+      </div>
+
+      <button onClick={ () => { setMobileNavVisible(true); }} className="grid place-items-center p-3 border rounded-lg text-gray-500 shadow-sm ml-auto md:hidden">
+        <MenuIcon />
+      </button>
+
+      { mobileNavVisible && 
+          <div className="flex flex-col h-screen w-screen fixed top-0 bg-black/40 left-0 z-50">
+            <div className="flex flex-col bg-white w-[85vw] h-full p-3 gap-4">
+                <div className="flex flex-row">
+                </div>
+                <div className="flex flex-row items-start">
+                  <img src="/images/logo.jpg" className="w-full" />
+                  <button onClick={ () => { setMobileNavVisible(false)}} className="p-2 border rounded-full ml-auto text-gray-500 shadow-sm">
+                    <CloseIcon />
+                  </button>
+                </div>
+                <div className="flex flex-col gap-1">
+                  {
+                    navlinks.map( (link) => {
+                      return (
+                        <button key={link.name} onClick={ () => { router.push(link.link); setMobileNavVisible(false) } } className={`transition-all ease-in-out duration-300 ease-in-out hover:text-primary-500 flex flex-row py-2 rounded-lg px-3 ${ link.link === pathname ? 'bg-primary-100/40 text-primary-500' : '' }`}>{link.name}</button>
+                      )
+                    })
+                  }
+                </div>
+                <div className="flex flex-col gap-2 mt-auto">
+                  {user ? <button onClick={async () => await new Authentication().signOut()} className="px-4 border-2 border-primary-400 rounded-full text-primary-500 py-2 font-medium transition-all duration-300 ease-in-out">Sign Out</button> :
+                  <button onClick={() => router.push("/login")} className="px-4 border-2 border-primary-400 rounded-full text-primary-500 py-2 font-medium transition-all duration-300 ease-in-out">Sign In</button>}
+                </div>
+            </div>
+          </div> }
+    </div>
   );
 }

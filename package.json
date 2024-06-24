@@ -9,19 +9,23 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@animxyz/react": "^0.6.7",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
+    "@formkit/auto-animate": "^0.8.2",
     "@mui/icons-material": "^5.15.18",
     "@mui/material": "^5.15.17",
     "@mui/x-data-grid": "^7.5.0",
     "@types/jspdf": "^2.0.0",
     "axios": "^1.7.1",
     "firebase": "^10.12.0",
+    "formik": "^2.4.6",
     "jspdf": "^2.5.1",
     "next": "14.2.3",
     "react": "^18",
     "react-dom": "^18",
-    "react-elastic-carousel": "^0.11.5"
+    "react-elastic-carousel": "^0.11.5",
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.7",
