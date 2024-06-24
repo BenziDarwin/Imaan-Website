@@ -9,12 +9,19 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
 import Authentication from "../firebase/authentication";
+import { useRouter } from "next/navigation";
 
 export default function SignIn() {
+  const router = useRouter();
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    await new Authentication().signIn(data.get("email")!.toString()!, data.get("password")!.toString());
+    let res = await new Authentication().signIn(data.get("email")!.toString()!, data.get("password")!.toString());
+    if(res) {
+      router.push("/")
+    } else {
+      alert("Invalid email or password!")
+    }
   };
 
   return (

@@ -6,6 +6,7 @@ import { User, onAuthStateChanged } from "firebase/auth";
 import { usePathname, useRouter } from "next/navigation";
 import * as React from "react";
 import { auth } from "../firebase/config";
+import Authentication from '../firebase/authentication';
 
 export default function NavigationBar() {
   const [user, setUser] = React.useState<User|null>(null);
@@ -43,17 +44,18 @@ export default function NavigationBar() {
             )
           })
         }
-        {
+        {user?
           adminLinks.map( (link) => {
             return (
               <button onClick={ () => { router.push(link.link) } } className={`transition-all ease-in-out duration-300 ease-in-out hover:text-primary-500 flex flex-row py-2 rounded-lg px-3 ${ link.link === pathname ? 'bg-primary-100/40 text-primary-500' : '' }`}>{link.name}</button>
             )
           })
-        }
+        :null}
       </div>
 
       <div className="flex flex-row gap-2 ml-auto hidden md:flex">
-        <button onClick={() => router.push("/login")} className="px-4  text-primary-500 py-2 rounded-lg font-medium transition-all duration-300 ease-in-out">Sign In</button>
+      {user ? <button onClick={async () => await new Authentication().signOut()} className="px-4 border-2 border-primary-400 rounded-full text-primary-500 py-2 font-medium transition-all duration-300 ease-in-out">Sign Out</button> :
+                  <button onClick={() => router.push("/login")} className="px-4 border-2 border-primary-400 rounded-full text-primary-500 py-2 font-medium transition-all duration-300 ease-in-out">Sign In</button>}
       </div>
 
       <button onClick={ () => { setMobileNavVisible(true); }} className="grid place-items-center p-3 border rounded-lg text-gray-500 shadow-sm ml-auto md:hidden">
@@ -81,7 +83,8 @@ export default function NavigationBar() {
                   }
                 </div>
                 <div className="flex flex-col gap-2 mt-auto">
-                  <button onClick={() => router.push("/login")} className="px-4 border-2 border-primary-400 rounded-full text-primary-500 py-2 font-medium transition-all duration-300 ease-in-out">Sign In</button>
+                  {user ? <button onClick={async () => await new Authentication().signOut()} className="px-4 border-2 border-primary-400 rounded-full text-primary-500 py-2 font-medium transition-all duration-300 ease-in-out">Sign Out</button> :
+                  <button onClick={() => router.push("/login")} className="px-4 border-2 border-primary-400 rounded-full text-primary-500 py-2 font-medium transition-all duration-300 ease-in-out">Sign In</button>}
                 </div>
             </div>
           </div> }
