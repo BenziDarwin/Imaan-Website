@@ -7,7 +7,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 
 import SortIcon from '@mui/icons-material/Sort';
-const CategoryButton = ({ isActive, children, onClick }) => {
+const CategoryButton = ({ isActive, children, onClick }:any) => {
 	const classes = `text-sm px-6 py-2 rounded-full font-semibold ${isActive ? 'bg-primary-500 text-white border-primary-500' : 'border text-gray-500 border-gray-400' }`
 	return (
 		<button className={classes} onClick={onClick}>{children}</button>
@@ -111,12 +111,6 @@ export default function ProductsPage() {
 
 	return (
 		<div className="flex flex-row h-full">
-			{/* Filters */}
-			<div className="flex flex-col border-r w-64 h-full hidden md:flex p-3">
-				<span className="text-xl font-semibold">Filters</span>
-			</div>
-
-
 			<div className="flex flex-col w-full h-full">
 				{/* Top Bar */}
 				<div className="flex flex-col border-b p-3 gap-3">

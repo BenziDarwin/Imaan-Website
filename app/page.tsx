@@ -16,6 +16,7 @@ import FacebookIcon from '@mui/icons-material/Facebook';
 import PhoneIcon from '@mui/icons-material/Phone';
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
+import Image from "next/image";
 
 export default function Home() {
   useEffect(() => {
@@ -134,7 +135,7 @@ export default function Home() {
           </div>
         </div>
         <div className="w-full flex flex-col">
-          <div className="bg-gray-300 w-full h-full"></div>
+            <Image src="/images/img1.jpg" alt="Hero" width={500} height={800}/>
         </div>
         
       </div>

@@ -1,33 +1,37 @@
-"use client";
-
-import DeleteIcon from "@mui/icons-material/Delete";
-import { Grid, IconButton, InputLabel, Paper, TextField } from "@mui/material";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Modal from "@mui/material/Modal";
-import Typography from "@mui/material/Typography";
-import * as React from "react";
-import FireStore from "../firebase/firestore";
+import React, { useState } from 'react';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import {
+  Box,
+  Button,
+  Grid,
+  IconButton,
+  InputLabel,
+  Modal,
+  TextField,
+  Typography
+} from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import FireStore from '../firebase/firestore';
 
 const style = {
-  position: "absolute" as const,
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: { xs: "90vw", md: "80vw" },
-  bgcolor: "background.paper",
-  border: "2px solid #000",
+  position: 'absolute' as const,
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: { xs: '90vw', md: '80vw' },
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
   boxShadow: 24,
   p: 4,
-  overflowY: "auto", // make the modal vertically scrollable
-  maxHeight: { md: "80vh", xs: "100vh" },
+  overflowY: 'auto', // make the modal vertically scrollable
+  maxHeight: { md: '80vh', xs: '100vh' },
 };
 
 interface Item {
   name: string;
   quantity: number;
   unitPrice: number;
-  [key: string]: string | number;
 }
 
 interface CreateInvoiceModalProps {
@@ -35,52 +39,76 @@ interface CreateInvoiceModalProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+const validationSchema = Yup.object().shape({
+  clientName: Yup.string().required('Client Name is required'),
+  clientEmail: Yup.string().email('Invalid email address').required('Client Email is required'),
+  clientPhone: Yup.string().required('Client Phone Number is required'),
+  paid: Yup.number().positive('Amount Paid must be a positive number').required('Amount Paid is required'),
+  items: Yup.array().of(
+    Yup.object().shape({
+      name: Yup.string().required('Item Name is required'),
+      quantity: Yup.number().min(1, 'Quantity must be at least 1').required('Quantity is required'),
+      unitPrice: Yup.number().min(0, 'Unit Price must be a non-negative number').required('Unit Price is required'),
+    })
+  ),
+});
+
 const CreateInvoiceModal: React.FC<CreateInvoiceModalProps> = ({
   open,
   setOpen,
 }) => {
   const handleClose = () => setOpen(false);
-  const [items, setItems] = React.useState<Item[]>([
-    { name: "", quantity: 1, unitPrice: 0 },
-  ]);
-  const [clientName, setClientName] = React.useState("");
-  const [clientEmail, setClientEmail] = React.useState("");
-  const [clientPhone, setClientPhone] = React.useState("");
-  const [paid, setPaid] = React.useState<number>(0);
+  const [items, setItems] = useState<Item[]>([{ name: '', quantity: 1, unitPrice: 0 }]);
+  const [clientName, setClientName] = useState('');
+  const [clientEmail, setClientEmail] = useState('');
+  const [clientPhone, setClientPhone] = useState('');
+  const [paid, setPaid] = useState<number>(0);
+
+  const formik = useFormik({
+    initialValues: {
+      clientName: '',
+      clientEmail: '',
+      clientPhone: '',
+      items: [{ name: '', quantity: 1, unitPrice: 0 }],
+      paid: 0,
+    },
+    validationSchema: validationSchema,
+    onSubmit: async (values) => {
+      const invoiceData = {
+        clientName: values.clientName,
+        clientEmail: values.clientEmail,
+        clientPhone: values.clientPhone,
+        items: values.items,
+        paid: values.paid,
+        date: new Date(),
+      };
+      let firestore = new FireStore('Invoices');
+      await firestore.addDocument(invoiceData);
+      handleClose();
+    },
+  });
 
   const handleItemChange = (
     index: number,
     field: keyof Item,
-    value: string,
+    value: string | number
   ) => {
-    const updatedItems = [...items];
-    updatedItems[index][field] = parseFloat(value) || value;
-    setItems(updatedItems);
+    const updatedItems = [...formik.values.items];
+    updatedItems[index] = {
+      ...updatedItems[index],
+      [field]: value,
+    };
+    formik.setFieldValue('items', updatedItems);
   };
 
   const addItem = () => {
-    setItems([...items, { name: "", quantity: 1, unitPrice: 0 }]);
+    setItems([...items, { name: '', quantity: 1, unitPrice: 0 }]);
   };
 
   const deleteItem = (index: number) => {
     const updatedItems = [...items];
     updatedItems.splice(index, 1);
     setItems(updatedItems);
-  };
-
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const invoiceData = {
-      clientName,
-      clientEmail,
-      clientPhone,
-      items,
-      paid,
-      date: new Date(),
-    };
-    let firestore = new FireStore("Invoices");
-    await firestore.addDocument(invoiceData);
-    handleClose();
   };
 
   return (
@@ -91,7 +119,7 @@ const CreateInvoiceModal: React.FC<CreateInvoiceModalProps> = ({
       aria-describedby="modal-modal-description"
     >
       <Box sx={style}>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={formik.handleSubmit}>
           <Typography variant="h6" gutterBottom>
             Create Invoice
           </Typography>
@@ -101,8 +129,12 @@ const CreateInvoiceModal: React.FC<CreateInvoiceModalProps> = ({
                 required
                 label="Client Name"
                 fullWidth
-                value={clientName}
-                onChange={(e) => setClientName(e.target.value)}
+                value={formik.values.clientName}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={formik.touched.clientName && Boolean(formik.errors.clientName)}
+                helperText={formik.touched.clientName && formik.errors.clientName}
+                name="clientName"
               />
             </Grid>
             <Grid item xs={12}>
@@ -110,8 +142,12 @@ const CreateInvoiceModal: React.FC<CreateInvoiceModalProps> = ({
                 required
                 label="Client Email"
                 fullWidth
-                value={clientEmail}
-                onChange={(e) => setClientEmail(e.target.value)}
+                value={formik.values.clientEmail}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={formik.touched.clientEmail && Boolean(formik.errors.clientEmail)}
+                helperText={formik.touched.clientEmail && formik.errors.clientEmail}
+                name="clientEmail"
               />
             </Grid>
             <Grid item xs={12}>
@@ -119,11 +155,15 @@ const CreateInvoiceModal: React.FC<CreateInvoiceModalProps> = ({
                 required
                 label="Client Phone Number"
                 fullWidth
-                value={clientPhone}
-                onChange={(e) => setClientPhone(e.target.value)}
+                value={formik.values.clientPhone}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={formik.touched.clientPhone && Boolean(formik.errors.clientPhone)}
+                helperText={formik.touched.clientPhone && formik.errors.clientPhone}
+                name="clientPhone"
               />
             </Grid>
-            {items.map((item, index) => (
+            {formik.values.items.map((item: Item, index: number) => (
               <React.Fragment key={index}>
                 <Grid item xs={12}>
                   <InputLabel>Item</InputLabel>
@@ -134,9 +174,9 @@ const CreateInvoiceModal: React.FC<CreateInvoiceModalProps> = ({
                     label="Item Name"
                     fullWidth
                     value={item.name}
-                    onChange={(e) =>
-                      handleItemChange(index, "name", e.target.value)
-                    }
+                    onChange={(e) => handleItemChange(index, 'name', e.target.value)}
+                    error={formik.touched.items?.[index]?.name && Boolean(formik.errors.items?.[index])}
+                    helperText={formik.errors.items?.[index].toString()}
                   />
                 </Grid>
                 <Grid item xs={6} sm={2}>
@@ -145,10 +185,10 @@ const CreateInvoiceModal: React.FC<CreateInvoiceModalProps> = ({
                     label="Quantity"
                     type="number"
                     fullWidth
-                    value={item.quantity.toString()}
-                    onChange={(e) =>
-                      handleItemChange(index, "quantity", e.target.value)
-                    }
+                    value={item.quantity}
+                    onChange={(e) => handleItemChange(index, 'quantity', parseFloat(e.target.value))}
+                    error={formik.touched.items?.[index]?.quantity && Boolean(formik.errors.items?.[index])}
+                    helperText={formik.errors.items?.[index].toString()}
                   />
                 </Grid>
                 <Grid item xs={6} sm={2}>
@@ -157,10 +197,10 @@ const CreateInvoiceModal: React.FC<CreateInvoiceModalProps> = ({
                     label="Unit Price"
                     type="number"
                     fullWidth
-                    value={item.unitPrice.toString()}
-                    onChange={(e) =>
-                      handleItemChange(index, "unitPrice", e.target.value)
-                    }
+                    value={item.unitPrice}
+                    onChange={(e) => handleItemChange(index, 'unitPrice', parseFloat(e.target.value))}
+                    error={formik.touched.items?.[index]?.unitPrice && Boolean(formik.errors.items?.[index])}
+                    helperText={formik.errors.items?.[index].toString()}
                   />
                 </Grid>
                 <Grid item xs={2}>
@@ -184,8 +224,12 @@ const CreateInvoiceModal: React.FC<CreateInvoiceModalProps> = ({
                 label="Amount Paid"
                 type="number"
                 fullWidth
-                value={paid}
-                onChange={(e) => setPaid(parseFloat(e.target.value))}
+                value={formik.values.paid}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={formik.touched.paid && Boolean(formik.errors.paid)}
+                helperText={formik.touched.paid && formik.errors.paid}
+                name="paid"
               />
             </Grid>
             <Grid item xs={12}>

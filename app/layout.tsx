@@ -22,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className="h-screen w-screen flex flex-col overflow-hidden" style={{backgroundColor:"white", color:"black"}}>
+        <div className="h-screen w-screen flex flex-col overflow-hidden" style={{backgroundColor:"#F1F3F4", color:"black"}}>
           <NavigationBar />
 
           {/* wrapped to fix overflow issues */}

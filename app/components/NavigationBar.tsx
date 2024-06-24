@@ -2,22 +2,10 @@
 
 import CloseIcon from '@mui/icons-material/Close';
 import MenuIcon from "@mui/icons-material/Menu";
-import {
-  AppBarProps as MuiAppBarProps
-} from "@mui/material/AppBar";
 import { User, onAuthStateChanged } from "firebase/auth";
 import { usePathname, useRouter } from "next/navigation";
 import * as React from "react";
 import { auth } from "../firebase/config";
-const drawerWidth = 240;
-
-interface AppBarProps extends MuiAppBarProps {
-  open?: boolean;
-}
-
-
-
-const pages = [{name:'Home', link:"/"}, { name:"About", link:"/about"}, {name:"Contact Us", link:"/contact-us"}];
 
 export default function NavigationBar() {
   const [user, setUser] = React.useState<User|null>(null);
@@ -29,7 +17,7 @@ export default function NavigationBar() {
     { name: 'Products', link: '/products' },
   ];
 
-  const adminLinks = [{ name: "Invoices", link: "/invoice" }];
+  const adminLinks = [{ name: "Invoices", link: "/invoice" }, { name: "Add Item", link: "/add-item" } ];
   const pathname = usePathname();
   
   React.useEffect(() => {
@@ -43,7 +31,6 @@ export default function NavigationBar() {
 
   return (
     <div className="flex flex-row items-center w-full border-b p-3 shadow-sm gap-8 bg-white">
-      {/* Brand */}
       <div className="flex flex-row items-center gap-3 text-lg font-medium">
         <img src="/images/logo.jpg" className="h-12" />
       </div>
@@ -56,11 +43,17 @@ export default function NavigationBar() {
             )
           })
         }
+        {
+          adminLinks.map( (link) => {
+            return (
+              <button onClick={ () => { router.push(link.link) } } className={`transition-all ease-in-out duration-300 ease-in-out hover:text-primary-500 flex flex-row py-2 rounded-lg px-3 ${ link.link === pathname ? 'bg-primary-100/40 text-primary-500' : '' }`}>{link.name}</button>
+            )
+          })
+        }
       </div>
 
       <div className="flex flex-row gap-2 ml-auto hidden md:flex">
-        <button className="px-4  text-primary-500 py-2 rounded-lg font-medium transition-all duration-300 ease-in-out">Sign In</button>
-        <button className="px-4 bg-primary-500 text-white py-2 font-medium shadow rounded-full transition-all duration-300 ease-in-out">Get started</button>
+        <button onClick={() => router.push("/login")} className="px-4  text-primary-500 py-2 rounded-lg font-medium transition-all duration-300 ease-in-out">Sign In</button>
       </div>
 
       <button onClick={ () => { setMobileNavVisible(true); }} className="grid place-items-center p-3 border rounded-lg text-gray-500 shadow-sm ml-auto md:hidden">

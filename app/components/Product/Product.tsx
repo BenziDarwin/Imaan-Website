@@ -7,7 +7,7 @@ import { useAutoAnimate } from '@formkit/auto-animate/react';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-export default function Product ({ product }) {
+export default function Product ({ product }:any) {
 	const [_isInCart, setIsInCart] = useState<boolean>(false); // replace
 	const [animationParent] = useAutoAnimate();
 
