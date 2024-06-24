@@ -5,8 +5,8 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { User, onAuthStateChanged } from "firebase/auth";
 import { usePathname, useRouter } from "next/navigation";
 import * as React from "react";
-import { auth } from "../firebase/config";
 import Authentication from '../firebase/authentication';
+import { auth } from "../firebase/config";
 
 export default function NavigationBar() {
   const [user, setUser] = React.useState<User|null>(null);
@@ -58,7 +58,10 @@ export default function NavigationBar() {
       </div>
 
       <div className="flex flex-row gap-2 ml-auto hidden md:flex">
-      {user ? <button onClick={async () => await new Authentication().signOut()} className="px-4 border-2 border-primary-400 rounded-full text-primary-500 py-2 font-medium transition-all duration-300 ease-in-out">Sign Out</button> :
+      {user ? <button onClick={async () => {
+        await new Authentication().signOut();
+        router.push("/");
+      }} className="px-4 border-2 border-primary-400 rounded-full text-primary-500 py-2 font-medium transition-all duration-300 ease-in-out">Sign Out</button> :
                   <button onClick={() => router.push("/login")} className="px-4 border-2 border-primary-400 rounded-full text-primary-500 py-2 font-medium transition-all duration-300 ease-in-out">Sign In</button>}
       </div>
 
@@ -87,7 +90,10 @@ export default function NavigationBar() {
                   }
                 </div>
                 <div className="flex flex-col gap-2 mt-auto">
-                  {user ? <button onClick={async () => await new Authentication().signOut()} className="px-4 border-2 border-primary-400 rounded-full text-primary-500 py-2 font-medium transition-all duration-300 ease-in-out">Sign Out</button> :
+                  {user ? <button onClick={async () => {
+                    await new Authentication().signOut();
+                    router.push("/")
+                  }} className="px-4 border-2 border-primary-400 rounded-full text-primary-500 py-2 font-medium transition-all duration-300 ease-in-out">Sign Out</button> :
                   <button onClick={() => router.push("/login")} className="px-4 border-2 border-primary-400 rounded-full text-primary-500 py-2 font-medium transition-all duration-300 ease-in-out">Sign In</button>}
                 </div>
             </div>
