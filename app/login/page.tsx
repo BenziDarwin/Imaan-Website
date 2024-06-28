@@ -17,11 +17,8 @@ export default function SignIn() {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     let res = await new Authentication().signIn(data.get("email")!.toString()!, data.get("password")!.toString());
-    if(res) {
-      router.push("/")
-    } else {
-      alert("Invalid email or password!")
-    }
+    router.push("/")
+   
   };
 
   return (
